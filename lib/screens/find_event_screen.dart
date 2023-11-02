@@ -2,12 +2,17 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_e2_app/widgets/navbar.dart';
 import 'package:proyecto_e2_app/widgets/sidebar.dart';
+import 'package:provider/provider.dart';
+import 'package:proyecto_e2_app/providers/event_provider.dart';
 
 class FindEventScreen extends StatelessWidget {
   const FindEventScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    String? selectedEventType;
+    String? enteredEventName;
+
     return Scaffold(
       appBar: const Navbar(),
       drawer: const Sidebar(),
@@ -46,7 +51,10 @@ class FindEventScreen extends StatelessWidget {
                     DropdownMenuItem(value: "Party", child: Text("Party")),
                     DropdownMenuItem(value: "Workshop", child: Text("Workshop")),
                   ],
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    selectedEventType = value;
+                    context.read<EventProvider>().filterEvents(eventType: selectedEventType, eventName: enteredEventName);
+                  },
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -60,6 +68,10 @@ class FindEventScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
+                        onChanged: (value) {
+                          enteredEventName = value;
+                          context.read<EventProvider>().filterEvents(eventType: selectedEventType, eventName: enteredEventName);
+                        },
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -67,20 +79,35 @@ class FindEventScreen extends StatelessWidget {
                       child: IconButton(
                         icon: const Icon(Icons.filter_list),
                         onPressed: () {
-                          // Acción del filtro aún no implementada
+                          context.read<EventProvider>().filterEvents(eventType: selectedEventType, eventName: enteredEventName);
                         },
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  // Aquí en el futuro se mostrará los eventos
+                Consumer<EventProvider>(
+                  builder: (ctx, eventProvider, child) {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: eventProvider.events.length,
+                      itemBuilder: (context, index) {
+                        final event = eventProvider.events[index];
+                        return Card(
+                          child: ListTile(
+                            title: Text(event.title),
+                            trailing: Text(event.date),
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                '/eventDetails',
+                                arguments: event.id,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),

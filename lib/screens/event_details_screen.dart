@@ -2,12 +2,18 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_e2_app/widgets/navbar.dart';
 import 'package:proyecto_e2_app/widgets/sidebar.dart';
+import 'package:provider/provider.dart';
+import 'package:proyecto_e2_app/providers/event_provider.dart';
 
 class EventDetailsScreen extends StatelessWidget {
-  const EventDetailsScreen({super.key});
+  final String eventId;
+
+  const EventDetailsScreen({required this.eventId, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final event = Provider.of<EventProvider>(context, listen: false).getEventById(eventId);
+
     return Scaffold(
       appBar: const Navbar(),
       drawer: const Sidebar(),
@@ -21,16 +27,16 @@ class EventDetailsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  'EVENT 1',
-                  style: TextStyle(
+                Text(
+                  event.title,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
                   ),
                 ),
                 const SizedBox(height: 20),
-                Image.asset(
-                  'assets/images/undraw_Gaming_re_cma2.png',
+                Image.network(  // Image.network ya que suponemos que imageUrl es una URL
+                  event.imageUrl,
                   height: MediaQuery.of(context).size.height * 0.25,
                 ),
                 const SizedBox(height: 20),
@@ -46,8 +52,8 @@ class EventDetailsScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Text(
-                    'Lorem ipsum dolor sit amet consectetur. Lorem venenatis sit eros iaculis risus sit sed. Tempor morbi velit luctus ut orci sit condimentum pharetra vitae. Elementum pellentesque proin tincidunt tortor cursus duis donec et elit. Vitae tempus consequat non vel sed vitae sed...',
+                  child: Text(
+                    event.description,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -63,9 +69,9 @@ class EventDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Text(
-                  'Fecha: 29 de Febrero, 2024', // a futuro dinamizar en función a la fecha real del evento
-                  style: TextStyle(
+                Text(
+                  'Fecha: ${event.date}', 
+                  style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 18,
                   ),

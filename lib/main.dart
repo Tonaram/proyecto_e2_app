@@ -46,10 +46,20 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/eventDetails': (context) => const EventDetailsScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/createEvent': (context) => const CreateEventScreen(),
         '/findEvent': (context) => const FindEventScreen(),
+      },
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/eventDetails':
+            final eventId = settings.arguments as String;
+            return MaterialPageRoute(
+              builder: (context) => EventDetailsScreen(eventId: eventId),
+            );
+          default:
+            return null;
+        }
       },
     );
   }
