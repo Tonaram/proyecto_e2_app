@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../utils/theme_manager.dart';
+import '../providers/theme_manager.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});

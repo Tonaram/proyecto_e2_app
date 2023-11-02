@@ -1,0 +1,28 @@
+[
+    {
+      "id": "1",
+      "title": "Evento 1",
+      "description": "Descripción del evento 1",
+      "date": "2023-11-10",
+      "imageUrl": "url_imagen_1",
+      "eventType": "Tournament"
+    },
+    {
+      "id": "2",
+      "title": "Conferencia de Tecnología",
+      "description": "Únete a expertos de todo el mundo para discutir las últimas tendencias y avances en tecnología.",
+      "date": "2023-12-05",
+      "imageUrl": "url_imagen_2",
+      "eventType": "Workshop"
+    },
+    {
+      "id": "3",
+      "title": "Festival de Música Verano",
+      "description": "Disfruta de las actuaciones de tus artistas favoritos en el festival de música más grande del verano.",
+      "date": "2024-01-15",
+      "imageUrl": "url_imagen_3",
+      "eventType": "Party"
+    }
+  ]
+  
+  

@@ -9,19 +9,25 @@ import 'package:proyecto_e2_app/screens/event_details_screen.dart';
 import 'package:proyecto_e2_app/screens/profile_screen.dart';
 
 import 'package:provider/provider.dart';
-import 'package:proyecto_e2_app/utils/theme_manager.dart';
+import 'package:proyecto_e2_app/providers/theme_manager.dart';
 import 'package:proyecto_e2_app/screens/permissions_screen.dart';
+import 'package:proyecto_e2_app/providers/event_provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeManager(),
-      child: MyApp(),
+     MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeManager()),
+        ChangeNotifierProvider(create: (context) => EventProvider()),
+      ],
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     final themeManager = Provider.of<ThemeManager>(context);
@@ -36,14 +42,14 @@ class MyApp extends StatelessWidget {
       themeMode: themeManager.themeMode,
       initialRoute: '/permissions',
       routes: {
-        '/permissions': (context) => PermissionsScreen(),
-        '/home': (context) => HomeScreen(),
-        '/login': (context) => LoginScreen(),
-        '/register': (context) => RegisterScreen(),
-        '/eventDetails': (context) => EventDetailsScreen(),
-        '/profile': (context) => ProfileScreen(),
-        '/createEvent': (context) => CreateEventScreen(),
-        '/findEvent': (context) => FindEventScreen(),
+        '/permissions': (context) => const PermissionsScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/eventDetails': (context) => const EventDetailsScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/createEvent': (context) => const CreateEventScreen(),
+        '/findEvent': (context) => const FindEventScreen(),
       },
     );
   }

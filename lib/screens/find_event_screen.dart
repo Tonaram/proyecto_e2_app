@@ -1,3 +1,4 @@
+//lib\screens\find_event_screen.dart
 import 'package:flutter/material.dart';
 import 'package:proyecto_e2_app/widgets/navbar.dart';
 import 'package:proyecto_e2_app/widgets/sidebar.dart';

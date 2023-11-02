@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionsScreen extends StatefulWidget {
+  const PermissionsScreen({super.key});
+
   @override
   _PermissionsScreenState createState() => _PermissionsScreenState();
 }
@@ -11,14 +13,11 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   bool _termsAccepted = false;
 
   Future<void> requestPermissions() async {
-    print('Términos aceptados: $_termsAccepted');
 
     Map<Permission, PermissionStatus> statuses = await [
       Permission.camera,
       Permission.location,
     ].request();
-
-    print('Status de permisos: $statuses');
 
     bool allGranted = statuses.values.every((status) => status.isGranted);
 
@@ -26,7 +25,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
       Navigator.of(context).pushReplacementNamed('/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Por favor, otorga todos los permisos y acepta los términos y condiciones."),
         ),
       );
@@ -41,17 +40,17 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
+            const Text(
               "Para continuar, necesitamos algunos permisos y que aceptes los términos y condiciones.",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: requestPermissions,
-              child: Text("Permitir permisos"),
+              child: const Text("Permitir permisos"),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               children: [
                 Checkbox(
@@ -67,7 +66,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                     onTap: () {
                       // enlace con términos y condiciones
                     },
-                    child: Text(
+                    child: const Text(
                       "Acepto los términos y condiciones",
                       style: TextStyle(decoration: TextDecoration.underline),
                     ),
