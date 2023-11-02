@@ -10,6 +10,7 @@ import 'package:proyecto_e2_app/screens/profile_screen.dart';
 
 import 'package:provider/provider.dart';
 import 'package:proyecto_e2_app/utils/theme_manager.dart';
+import 'package:proyecto_e2_app/screens/permissions_screen.dart';
 
 void main() {
   runApp(
@@ -33,8 +34,9 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData.dark(),
       themeMode: themeManager.themeMode,
-      initialRoute: '/home',
+      initialRoute: '/permissions',
       routes: {
+        '/permissions': (context) => PermissionsScreen(),
         '/home': (context) => HomeScreen(),
         '/login': (context) => LoginScreen(),
         '/register': (context) => RegisterScreen(),
