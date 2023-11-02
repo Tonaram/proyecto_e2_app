@@ -1,4 +1,8 @@
+//lib\widgets\sidebar.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../utils/theme_manager.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});
@@ -34,7 +38,8 @@ class Sidebar extends StatelessWidget {
             leading: const Icon(Icons.brightness_6),
             title: const Text('Toggle Theme'),
             onTap: () {
-              // Lógica para cambiar el tema se hará a futuro
+              final themeManager = Provider.of<ThemeManager>(context, listen: false);
+              themeManager.toggleTheme();
             },
           ),
           const Divider(),
