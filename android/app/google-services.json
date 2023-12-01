@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1073045289102",
+    "project_id": "e-vente-dc908",
+    "storage_bucket": "e-vente-dc908.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073045289102:android:ee77217ec90034671c71df",
+        "android_client_info": {
+          "package_name": "com.example.proyecto_e2_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcHR_JeTyXJLyMUR5S9U8vVttyRg4hzgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

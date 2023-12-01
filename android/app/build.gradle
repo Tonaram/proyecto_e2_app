@@ -1,7 +1,9 @@
+//android\app\build.gradle
 plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services' // Google Services plugin
 }
 
 def localProperties = new Properties()
@@ -64,4 +66,17 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    // Firebase dependencies
+    // Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:32.6.0')
+
+    // Firebase Auth para autenticación de usuarios
+    implementation 'com.google.firebase:firebase-auth'
+
+    // Cloud Firestore para almacenamiento de datos
+    implementation 'com.google.firebase:firebase-firestore'
+
+    // analytics talvez?
+    implementation 'com.google.firebase:firebase-analytics'
+}

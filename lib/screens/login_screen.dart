@@ -1,9 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_e2_app/widgets/navbar.dart';
 import 'package:proyecto_e2_app/widgets/sidebar.dart';
+import 'package:proyecto_e2_app/services/auth_service.dart'; //servicio de autenticación
+import 'package:firebase_auth/firebase_auth.dart'; //librería de autenticación de Firebase
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    try {
+      await AuthService().signInWithEmailPassword(
+        _emailController.text,
+        _passwordController.text,
+      );
+      Navigator.of(context).pushNamed('/home');
+    } on FirebaseAuthException catch (e) {
+      final snackBar = SnackBar(content: Text('Error al iniciar sesión: ${e.message}'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +61,12 @@ class LoginScreen extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
                 ),
                 const SizedBox(height: 20),
-                const _CustomTextField(hintText: 'Username / Email'),
+                _CustomTextField(hintText: 'Email', controller: _emailController),
                 const SizedBox(height: 10),
-                const _CustomTextField(hintText: 'Password', obscureText: true),
+                _CustomTextField(hintText: 'Password', obscureText: true, controller: _passwordController),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/home');
-                  },
+                  onPressed: _login,
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -71,8 +99,14 @@ class LoginScreen extends StatelessWidget {
 class _CustomTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
+  final TextEditingController controller;
 
-  const _CustomTextField({required this.hintText, this.obscureText = false});
+  const _CustomTextField({
+    required this.hintText,
+    this.obscureText = false,
+    required this.controller,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +116,7 @@ class _CustomTextField extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
+        controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
