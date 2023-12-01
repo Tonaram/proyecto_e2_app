@@ -27,40 +27,41 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeManager()),
         ChangeNotifierProvider(create: (context) => EventProvider()),
         StreamProvider<User?>.value(
-          value: AuthService().authStateChanges, // estado de autenticación a través de la app
+          value: AuthService().authStateChanges,
           initialData: null,
         ),
       ],
-      // Se utiliza Builder para crear un nuevo BuildContext que tendrá acceso a los providers.
-      child: Builder(
-        builder: (context) => MaterialApp(
-          title: 'E-VENTe',
-          theme: ThemeData(
-            primarySwatch: Colors.blueGrey,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
-          darkTheme: ThemeData.dark(),
-          themeMode: Provider.of<ThemeManager>(context, listen: false).themeMode, // `listen: false` para evitar que se reconstruya el widget
-          initialRoute: '/permissions',
-          routes: {
-            '/permissions': (context) => const PermissionsScreen(),
-            '/auth': (context) => const AuthWrapper(),
-            '/home': (context) => const HomeScreen(),
-            '/login': (context) => const LoginScreen(),
-            '/register': (context) => const RegisterScreen(),
-            '/eventDetails': (context) => const EventDetailsScreen(),
-            '/profile': (context) => const ProfileScreen(),
-            '/createEvent': (context) => const CreateEventScreen(),
-            '/findEvent': (context) => const FindEventScreen(),
-          },
-        ),
+      child: Consumer<ThemeManager>(
+        builder: (context, themeManager, _) {
+          return MaterialApp(
+            title: 'E-VENTe',
+            theme: ThemeData(
+              primarySwatch: Colors.blueGrey,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+            ),
+            darkTheme: ThemeData.dark(),
+            themeMode: themeManager.themeMode, // Accede al themeMode directamente desde el ThemeManager
+            initialRoute: '/permissions',
+            routes: {
+              '/permissions': (context) => const PermissionsScreen(),
+              '/auth': (context) => const AuthWrapper(),
+              '/home': (context) => const HomeScreen(),
+              '/login': (context) => const LoginScreen(),
+              '/register': (context) => const RegisterScreen(),
+              '/eventDetails': (context) => const EventDetailsScreen(),
+              '/profile': (context) => const ProfileScreen(),
+              '/createEvent': (context) => const CreateEventScreen(),
+              '/findEvent': (context) => const FindEventScreen(),
+            },
+          );
+        },
       ),
     );
   }

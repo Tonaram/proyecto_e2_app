@@ -43,8 +43,7 @@ class Sidebar extends StatelessWidget {
             leading: const Icon(Icons.brightness_6),
             title: const Text('Toggle Theme'),
             onTap: () {
-              final themeManager = Provider.of<ThemeManager>(context, listen: false);
-              themeManager.toggleTheme();
+              Provider.of<ThemeManager>(context, listen: false).toggleTheme();
             },
           ),
           const Divider(),
@@ -68,13 +67,14 @@ class Sidebar extends StatelessWidget {
                 );
               },
             ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Profile'),
-            onTap: () {
-              Navigator.of(context).pushNamed('/profile');
-            },
-          ),
+          if (user != null) // Si el usuario está loggeado, mostrar botón de perfil
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
+              onTap: () {
+                Navigator.of(context).pushNamed('/profile');
+              },
+            ),
         ],
       ),
     );
