@@ -20,18 +20,35 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   String _eventType = '';
   DateTime _eventDate = DateTime.now(); // El usuario no puede crear eventos en el pasado
   String _eventDescription = '';
-  String _imageUrl = ''; // TODO: tener una manera de obtener esta URL, mediante la carga de una imagen
   
   // Controladores para los TextFields
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _typeController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-
+  final TextEditingController _dateController = TextEditingController(); // Para mostrar la fecha seleccionada
   @override
   void dispose() {
     // Limpia los controladores cuando se destruye el widget
     _nameController.dispose();
+    _typeController.dispose();
     _descriptionController.dispose();
+    _dateController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _eventDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null && pickedDate != _eventDate) {
+      setState(() {
+        _eventDate = pickedDate;
+        _dateController.text = DateFormat.yMd().format(pickedDate); // Formato de fecha para mostrar en el TextField
+      });
+    }
   }
 
   Future<void> _createEvent() async {
@@ -42,7 +59,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         title: _eventName,
         description: _eventDescription,
         date: _eventDate,
-        imageUrl: _imageUrl,
         eventType: _eventType,
       );
 
@@ -61,7 +77,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           _eventDescription = '';
           _eventType = '';
           _eventDate = DateTime.now();
-          _imageUrl = '';
         });
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -122,7 +137,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     onChanged: (value) => _eventName = value,
                   ),
                   const SizedBox(height: 10),
-                  DropdownButtonFormField(
+                  DropdownButtonFormField<String>(
+                    value: _eventType.isEmpty ? null : _eventType, // valor inicial vacío
                     decoration: InputDecoration(
                       labelText: 'Event Type',
                       border: OutlineInputBorder(
@@ -134,7 +150,17 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       DropdownMenuItem(value: "Party", child: Text("Party")),
                       DropdownMenuItem(value: "Workshop", child: Text("Workshop")),
                     ],
-                    onChanged: (value) {},
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _eventType = newValue ?? ''; // evitar _eventType sea null
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select an event type';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -153,17 +179,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         child: ElevatedButton.icon(
                           icon: const Icon(Icons.calendar_today),
                           label: const Text("Date"),
-                          onPressed: () async {
-                            DateTime? selectedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2101),
-                            );
-            
-                            if (selectedDate != null && selectedDate != DateTime.now()) {
-                              // manejo futuro de la fecha seleccionada
-                            }
+                          onPressed: () {
+                            _selectDate(context);
                           },
                         ),
                       ),
@@ -171,6 +188,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   ),
                   const SizedBox(height: 10),
                   TextField(
+                    controller: _descriptionController,
                     maxLines: null,
                     keyboardType: TextInputType.multiline,
                     decoration: InputDecoration(
@@ -181,6 +199,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+                    onChanged: (value) => _eventDescription = value,
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
