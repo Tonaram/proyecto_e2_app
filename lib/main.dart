@@ -14,7 +14,6 @@ import 'package:proyecto_e2_app/screens/event_details_screen.dart';
 import 'package:proyecto_e2_app/screens/profile_screen.dart';
 import 'package:proyecto_e2_app/providers/theme_manager.dart';
 import 'package:proyecto_e2_app/screens/permissions_screen.dart';
-import 'package:proyecto_e2_app/providers/event_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +31,6 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeManager()),
-        ChangeNotifierProvider(create: (context) => EventProvider()),
         StreamProvider<User?>.value(
           value: AuthService().authStateChanges,
           initialData: null,

@@ -54,7 +54,7 @@ class CreateEventScreen extends StatelessWidget {
                   items: const [
                     DropdownMenuItem(value: "Tournament", child: Text("Tournament")),
                     DropdownMenuItem(value: "Party", child: Text("Party")),
-                    DropdownMenuItem(value: "Workshop", child: Text("Workshop")), // Ejemplo de 3ra opción
+                    DropdownMenuItem(value: "Workshop", child: Text("Workshop")),
                   ],
                   onChanged: (value) {},
                 ),
