@@ -79,4 +79,7 @@ dependencies {
 
     // analytics talvez?
     implementation 'com.google.firebase:firebase-analytics'
+
+    // ads
+    implementation 'com.google.android.gms:play-services-ads:22.5.0'
 }

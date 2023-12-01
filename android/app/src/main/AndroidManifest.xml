@@ -8,6 +8,10 @@
         android:label="proyecto_e2_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+         <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7800978004000201~9259386269"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -14,19 +14,21 @@ import 'package:proyecto_e2_app/screens/event_details_screen.dart';
 import 'package:proyecto_e2_app/screens/profile_screen.dart';
 import 'package:proyecto_e2_app/providers/theme_manager.dart';
 import 'package:proyecto_e2_app/screens/permissions_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform, // Inicializa Firebase con las opciones generadas
   );
+  MobileAds.instance.initialize(); // Inicializa tu servicio de anuncios
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [

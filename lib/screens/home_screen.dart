@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_e2_app/widgets/navbar.dart';
 import 'package:proyecto_e2_app/widgets/sidebar.dart';
+import 'package:proyecto_e2_app/services/ad_banner.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -66,6 +67,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
+      bottomNavigationBar: AdBanner(), // adbanner
     );
   }
 }

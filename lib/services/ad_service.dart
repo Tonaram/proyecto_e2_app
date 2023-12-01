@@ -11,11 +11,9 @@ class AdService {
 
   AdService._internal();
 
-  late BannerAd banner;
-
-  void initialize() {
-    banner = BannerAd(
-      adUnitId: "",//BannerAd.testAdUnitId, // remplazar con el id del banner TODO
+  BannerAd createBannerAd() {
+    BannerAd banner = BannerAd(
+      adUnitId: 'ca-app-pub-7800978004000201/3339973032', // Ad Unit ID
       size: AdSize.banner,
       request: AdRequest(),
       listener: BannerAdListener(
@@ -27,6 +25,9 @@ class AdService {
         },
         // métodos del listener
       ),
-    )..load();
+    );
+    banner.load();
+    return banner;
   }
 }
+
