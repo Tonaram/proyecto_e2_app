@@ -6,7 +6,7 @@ import 'package:proyecto_e2_app/screens/event_details_screen.dart';
 import 'package:proyecto_e2_app/services/event_service.dart';
 import 'package:proyecto_e2_app/widgets/navbar.dart';
 import 'package:proyecto_e2_app/widgets/sidebar.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -93,70 +93,100 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildEventCard(BuildContext context, Event event) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 5,
-              color: Colors.grey.withOpacity(0.3),
-            ),
-          ],
+    return Dismissible(
+      key: Key(event.id), // clave única
+      direction: DismissDirection.endToStart, // derecha a izquierda
+      onDismissed: (direction) {
+        // método eliminar el evento
+        _deleteEvent(event.id);
+      },
+      background: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        color: Colors.red,
+        child: const Align(
+          child: Icon(Icons.delete, color: Colors.white),
+          alignment: Alignment.centerRight,
         ),
-        child: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.event),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EventDetailsScreen(eventId: event.id),
-                  ),
-                );
-              },
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Text(event.eventType),
-                ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 5,
+                color: Colors.grey.withOpacity(0.3),
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.qr_code),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('QR Code'),
-                      content: Image.asset('assets/images/qr_code.png'), // qr code imagen
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('Close'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-          ],
+            ],
+          ),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.event),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EventDetailsScreen(eventId: event.id),
+                    ),
+                  );
+                },
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      event.title,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(event.eventType),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.qr_code),
+                onPressed: () {
+                  // Implementación de QR Code
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('QR Code'),
+                        content: Image.asset('assets/images/qr_code.png'), // Imagen QR de ejemplo
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Close'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _deleteEvent(String eventId) async {
+    try {
+      await EventService().deleteEvent(eventId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Evento eliminado')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al eliminar el evento')),
+      );
+    }
   }
 }
