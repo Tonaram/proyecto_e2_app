@@ -1,9 +1,22 @@
+// lib\screens\profile_screen.dart
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:proyecto_e2_app/models/event.dart';
+import 'package:proyecto_e2_app/screens/event_details_screen.dart';
+import 'package:proyecto_e2_app/services/event_service.dart';
 import 'package:proyecto_e2_app/widgets/navbar.dart';
 import 'package:proyecto_e2_app/widgets/sidebar.dart';
+import 'package:intl/intl.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final user = FirebaseAuth.instance.currentUser; // usuario actual
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +33,9 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  'USERNAME',
-                  style: TextStyle(
+                Text(
+                  user?.email ?? 'No User',
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
                   ),
@@ -48,12 +61,27 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                ...List.generate(3, (index) => _buildEventCard(context, index)),
+                StreamBuilder<List<Event>>(
+                  stream: EventService().getEvents(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No events found'));
+                    }
+
+                    List<Event> events = snapshot.data!;
+                    return Column(
+                      children: events.map((event) => _buildEventCard(context, event)).toList(),
+                    );
+                  },
+                ),
                 const SizedBox(height: 20),
                 IconButton(
                   icon: const Icon(Icons.settings, size: 30),
                   onPressed: () {
-                    // Por ahora no hace nada
+                    // Implementación de la configuración
                   },
                 ),
               ],
@@ -64,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEventCard(BuildContext context, int index) {
+  Widget _buildEventCard(BuildContext context, Event event) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Container(
@@ -84,7 +112,12 @@ class ProfileScreen extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.event),
               onPressed: () {
-                Navigator.of(context).pushNamed('/eventDetails');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EventDetailsScreen(eventId: event.id),
+                  ),
+                );
               },
             ),
             Expanded(
@@ -92,17 +125,33 @@ class ProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Event ${index + 1}',
+                    event.title,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(index == 2 ? 'Joined' : 'Created'),
+                  Text(event.eventType),
                 ],
               ),
             ),
             IconButton(
               icon: const Icon(Icons.qr_code),
               onPressed: () {
-                // Por ahora no hace nada
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('QR Code'),
+                      content: Image.asset('assets/images/qr_code.png'), // qr code imagen
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('Close'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
             ),
           ],
