@@ -1,11 +1,23 @@
 //lib\screens\find_event_screen.dart
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:proyecto_e2_app/models/event.dart';
+import 'package:proyecto_e2_app/screens/event_details_screen.dart';
+import 'package:proyecto_e2_app/services/event_service.dart';
 import 'package:proyecto_e2_app/widgets/navbar.dart';
 import 'package:proyecto_e2_app/widgets/sidebar.dart';
 
-class FindEventScreen extends StatelessWidget {
-  const FindEventScreen({super.key});
+class FindEventScreen extends StatefulWidget {
+  const FindEventScreen({Key? key}) : super(key: key);
 
+  @override
+  _FindEventScreenState createState() => _FindEventScreenState();
+}
+
+class _FindEventScreenState extends State<FindEventScreen> {
+  String _selectedEventType = '';
+  String _searchEventName = '';
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +46,7 @@ class FindEventScreen extends StatelessWidget {
                   height: MediaQuery.of(context).size.height * 0.33,
                 ),
                 const SizedBox(height: 20),
-                DropdownButtonFormField(
+                DropdownButtonFormField<String>(
                   decoration: InputDecoration(
                     labelText: 'Event Type',
                     border: OutlineInputBorder(
@@ -46,41 +58,66 @@ class FindEventScreen extends StatelessWidget {
                     DropdownMenuItem(value: "Party", child: Text("Party")),
                     DropdownMenuItem(value: "Workshop", child: Text("Workshop")),
                   ],
-                  onChanged: (value) {},
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedEventType = newValue ?? '';
+                    });
+                  },
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Event Name',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Event Name',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: IconButton(
-                        icon: const Icon(Icons.filter_list),
-                        onPressed: () {
-                          // Acción del filtro aún no implementada
-                        },
-                      ),
-                    ),
-                  ],
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchEventName = value;
+                    });
+                  },
                 ),
                 const SizedBox(height: 20),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.4,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  // Aquí en el futuro se mostrará los eventos
+                StreamBuilder<List<Event>>(
+                  stream: EventService().getEvents(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No events found'));
+                    }
+
+                    List<Event> events = snapshot.data!;
+                    if (_selectedEventType.isNotEmpty) {
+                      events = events.where((event) => event.eventType == _selectedEventType).toList();
+                    }
+                    if (_searchEventName.isNotEmpty) {
+                      events = events.where((event) => event.title.toLowerCase().contains(_searchEventName.toLowerCase())).toList();
+                    }
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: events.length,
+                      itemBuilder: (context, index) {
+                        Event event = events[index];
+                        return ListTile(
+                          title: Text(event.title),
+                          subtitle: Text(DateFormat.yMd().format(event.date)),
+                          onTap: () {
+                            // Navegar a EventDetailsScreen con el ID del evento
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventDetailsScreen(eventId: event.id),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),
