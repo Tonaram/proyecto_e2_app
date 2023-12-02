@@ -1,13 +1,68 @@
 //lib\screens\event_details_screen.dart
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:proyecto_e2_app/models/event.dart';
 import 'package:proyecto_e2_app/widgets/navbar.dart';
 import 'package:proyecto_e2_app/widgets/sidebar.dart';
+import 'package:proyecto_e2_app/services/event_service.dart';
+import 'package:intl/intl.dart'; // formatear fechas
 
-class EventDetailsScreen extends StatelessWidget {
-  const EventDetailsScreen({super.key});
+class EventDetailsScreen extends StatefulWidget {
+  final String eventId; // ID del evento
+
+  const EventDetailsScreen({Key? key, required this.eventId}) : super(key: key);
+
+  @override
+  _EventDetailsScreenState createState() => _EventDetailsScreenState();
+}
+
+class _EventDetailsScreenState extends State<EventDetailsScreen> {
+  Event? _event;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEvent();
+  }
+
+  Future<void> _loadEvent() async {
+    try {
+      var eventService = EventService();
+      var event = await eventService.getEventById(widget.eventId);
+      if (event != null) {
+        setState(() {
+          _event = event;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar el evento: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_event == null) {
+      return const Scaffold(
+        appBar: Navbar(),
+        drawer: Sidebar(),
+        body: Center(child: Text("Evento no encontrado")),
+      );
+    }
+
     return Scaffold(
       appBar: const Navbar(),
       drawer: const Sidebar(),
@@ -15,57 +70,32 @@ class EventDetailsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 400,
-            ),
+            constraints: const BoxConstraints(maxWidth: 400),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  'EVENT 1',
-                  style: TextStyle(
+                Text(
+                  _event!.title,
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
                   ),
                 ),
                 const SizedBox(height: 20),
-                Image.asset(
-                  'assets/images/undraw_Gaming_re_cma2.png',
-                  height: MediaQuery.of(context).size.height * 0.25,
+                // TODO futuro images
+                // Image.network(
+                //   _event!.imageUrl,
+                //   height: MediaQuery.of(context).size.height * 0.25,
+                // ),
+                const SizedBox(height: 20),
+                Text(
+                  _event!.description,
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 5,
-                        color: Colors.grey.withOpacity(0.3),
-                      ),
-                    ],
-                  ),
-                  child: const Text(
-                    'Lorem ipsum dolor sit amet consectetur. Lorem venenatis sit eros iaculis risus sit sed. Tempor morbi velit luctus ut orci sit condimentum pharetra vitae. Elementum pellentesque proin tincidunt tortor cursus duis donec et elit. Vitae tempus consequat non vel sed vitae sed...',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.map, color: Colors.blue), // Placeholder para el mapa
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Fecha: 29 de Febrero, 2024', // a futuro dinamizar en función a la fecha real del evento
-                  style: TextStyle(
+                Text(
+                  'Fecha: ${DateFormat.yMd().format(_event!.date)}',
+                  style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 18,
                   ),
@@ -73,7 +103,7 @@ class EventDetailsScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    // Por ahora no hace nada
+                    // TODO funcionalidad unirse al evento
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(

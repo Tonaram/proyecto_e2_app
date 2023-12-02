@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto_e2_app/screens/event_details_screen.dart';
 import 'package:proyecto_e2_app/widgets/navbar.dart';
 import 'package:proyecto_e2_app/widgets/sidebar.dart';
 import 'package:proyecto_e2_app/models/event.dart';
@@ -63,7 +64,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       );
 
       try {
-        await _eventService.createEvent(event);
+        String eventId = await _eventService.createEvent(event);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Evento creado correctamente'),
@@ -78,6 +79,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           _eventType = '';
           _eventDate = DateTime.now();
         });
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventDetailsScreen(eventId: eventId),
+          ),
+        );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

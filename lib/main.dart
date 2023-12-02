@@ -22,7 +22,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform, // Inicializa Firebase con las opciones generadas
   );
   MobileAds.instance.initialize(); // Inicializa tu servicio de anuncios
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
               '/home': (context) => const HomeScreen(),
               '/login': (context) => const LoginScreen(),
               '/register': (context) => const RegisterScreen(),
-              '/eventDetails': (context) => const EventDetailsScreen(),
+              '/eventDetails': (context) => const EventDetailsScreen(eventId: '',),
               '/profile': (context) => const ProfileScreen(),
               '/createEvent': (context) => const CreateEventScreen(),
               '/findEvent': (context) => const FindEventScreen(),

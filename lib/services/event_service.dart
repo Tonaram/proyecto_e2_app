@@ -7,8 +7,9 @@ class EventService {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   // Crear un nuevo evento
-  Future<void> createEvent(Event event) async {
-    await _firebaseFirestore.collection('events').add(event.toFirestore());
+  Future<String> createEvent(Event event) async {
+    DocumentReference docRef = await _firebaseFirestore.collection('events').add(event.toFirestore());
+    return docRef.id;
   }
 
   // Obtener un stream de eventos
@@ -16,6 +17,20 @@ class EventService {
     return _firebaseFirestore.collection('events').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) => Event.fromFirestore(doc.data(), doc.id)).toList();
     });
+  }
+
+    // Obtener un evento específico por ID
+  Future<Event?> getEventById(String eventId) async {
+    try {
+      DocumentSnapshot doc = await _firebaseFirestore.collection('events').doc(eventId).get();
+      if (doc.exists) {
+        return Event.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+      } else {
+        throw Exception("El evento con ID: $eventId no se encontró.");
+      }
+    } catch (e) {
+      throw Exception("Error al obtener el evento: $e");
+    }
   }
 
   // Actualizar un evento existente
